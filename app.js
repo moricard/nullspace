@@ -32,6 +32,15 @@ app.configure(function(){
   app.use(express.session());
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'public')));
+  app.use(function(req, res){
+      res.status(404);
+      if (req.accepts('html')){
+          res.render('404', { title: 'Not Found', status: 404, url: req.url});
+          return;
+      }
+
+      res.type('txt').send('Not found');
+  });
 });
 
 app.configure('development', function(){
@@ -61,7 +70,6 @@ var notLog = new mongoose.Schema({
 
 app.get('/', routes.index);
 app.get('/users', user.list);
-
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });
